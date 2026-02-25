@@ -1,6 +1,8 @@
 #include "ParquetReader.h"
 
 #include "ParquetReader.h"
+
+#include <cstring>
 #include <fcntl.h>
 #include <sys/mman.h>
 #include <sys/stat.h>
@@ -54,4 +56,16 @@ std::span<const uint8_t> ParquetReader::getParquetBytes(size_t offset, size_t le
         return {};
     }
     return {data_ + offset, length};
+}
+
+bool ParquetReader::isValidParquetFile() {
+    // header and footer equal PAR1
+    return std::memcmp(getParquetBytes(0, 4).data(), "PAR1", 4) == 0 &&
+           std::memcmp(getParquetBytes(size_-4, 4).data(), "PAR1", 4) == 0;
+}
+
+std::span<const uint8_t> ParquetReader::getFooter() {
+    uint32_t footerSize;
+    std::memcpy(&footerSize, data_ + size_ - 8, 4);
+    return getParquetBytes(size_ - 8 - footerSize, footerSize);
 }

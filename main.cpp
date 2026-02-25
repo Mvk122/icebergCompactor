@@ -21,5 +21,10 @@ int main() {
         std::cout << static_cast<char>(byte);
     }
     std::cout << std::endl;
+
+    if (parquet_reader.isValidParquetFile()) {
+        std::cout << "valid file";
+    }
+
     return 0;
 }

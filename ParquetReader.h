@@ -10,6 +10,10 @@ class ParquetReader {
 public:
     static std::optional<ParquetReader> open(const std::string& path);
     std::span<const uint8_t> getParquetBytes(size_t offset, size_t length);
+    std::span<const uint8_t> getFooter();
+
+    bool isValidParquetFile();
+
     ~ParquetReader();
 
     // Disable Copying
